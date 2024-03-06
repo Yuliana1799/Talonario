@@ -1,376 +1,962 @@
 <template>
-  <div>
-    <div class="contenedor">
-      <div class="titulo">
-        <h1 class="text_tit">TALONARIO</h1>
+  <div class="app">
+    <div class="cont_titulo">
+      <h1 class="text_titulo">Talonario</h1>
+    </div>
+    <div :class="Alerta()">
+      <div class="cont_alerta">
+        <p class="text_alerta">{{ alerta }}</p>
       </div>
-      <div class="cuerpo">
-        <div class="cont1">
-          <div class="card1" :style="card1 ? 'display:block' : 'display: none'">
-            <div class="info">
-              <h1 class="info">INFORMACIÓN</h1>
-            </div>
-            <div class="cuerpo_info">
-              <p>{{ premio }}</p>
-            </div>
-            <div class="cuerpo_info">
-              <p>{{ valor_boleta }}</p>
-            </div>
-            <div class="cuerpo_info">
-              <p>{{ seleccion_loteria }}</p>
-            </div>
-            <div class="cuerpo_info">
-              <p>{{ fecha }}</p>
-            </div>
-            <div class="cuerpo_info">
-              <button class="editar_info" @click="editar_info()">EDITAR</button>
-            </div>
+    </div>
+    <div class="container" v-if="RegistroTalonario">
+      <div class="cont_form">
+        <div class="form">
+          <div class="cont_titulo_form">
+            <p class="text_titulo_form">Crear talonario</p>
+          </div>
+          <div class="cont_text_premio">
+            <input type="text" placeholder="Ingrese el premio" v-model="premio">
+          </div>
+          <div class="cont_text_precio">
+            <input type="text" placeholder="Ingrese el valor de la balota" v-model="Precio">
+          </div>
+          <div class="cont_tipos_loterias">
+            <p class="text_tipos_loterias">Tipo de loteria</p>
+            <select v-model="selectedLoteria">
+              <option value="Dorado Mañana">Dorado Mañana</option>
+              <option value="Dorado Tarde">Dorado Tarde</option>
+              <option value="Santander">Santander</option>
+              <option value="Culona">Culona</option>
+              <option value="Boyaca">Boyaca</option>
+              <option value="Cafeterito">Cafeterito</option>
+              <option value="Cundinamarca">Cundinamarca</option>
+            </select>
+          </div>
+          <div class="cont_num_boletas">
+            <p class="text_numero_puestos">Numero de puestos</p>
+            <select v-model="selectedCantidad">
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="75">75</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div class="cont_fecha">
+            <input type="date" v-model="fecha">
+          </div>
+          <div class="cont_btn">
+            <button class="btn" @click="crearTalonario()">Crear</button>
           </div>
         </div>
-        <div class="cont_2">
-          <div class="balotas" v-for="(bola, i) in balotas" :key="i">
-            <div class="balota" @click="registrar_balota(i)">
-              <p>{{ bola.item }}</p>
-            </div>
-          </div>
-          <div
-            class="modal"
-            tabindex="-1"
-            :style="registro_balota ? 'display:block' : 'display:none'"
-          >
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Diligenciar la información</h5>
-                </div>
-                <div class="modal-body">
-                  <div class="card1">
-                    <div class="cuerpo_info">
-                      <p>{{ boletas_adquirir }}</p>
-                    </div>
-                    <input
-                      type="text"
-                      value="nombre"
-                      placeholder="Nombre"
-                      v-model="nombre_persona"
-                    />
-                    <br />
-                    <input
-                      type="number"
-                      value="telefono"
-                      placeholder="Teléfono"
-                      v-model="telefono"
-                    />
-                    <br />
-                    <input
-                      type="text"
-                      value="direccion"
-                      placeholder="Direción"
-                      v-model="direccion"
-                    />
-                    <br />
-                    <input
-                      type="radio"
-                      value="Si"
-                      name="opcion"
-                      v-model="seleccion_pago"
-                    />
-                    Si
-                    <input
-                      type="radio"
-                      value="No"
-                      name="opcion"
-                      v-model="seleccion_pago"
-                    />
-                    No
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                    @click="registro_balota = false"
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="agregar()"
-                  >
-                    Guardar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-         
+      </div>
+    </div>
+    <div class="cont_forma_registro" v-if="RegistrarDueño">
+      <div class="cont_form_registro">
+        <p class="nam_div_registro">Registro de boletas</p>
+        <div class="cont_nombre">
+          <input type="text" placeholder="Nombre" v-model="nombre">
         </div>
-        <div class="cont3">
-           <div class="card1" :style="card1 ? 'display:block' : 'display: none'">
-            <div class="info">
-              <h1 class="info">INFORMACIÓN</h1>
+        <div class="cont_telefono">
+          <input type="text" placeholder="Telefono" v-model="telefono">
+        </div>
+        <div class="cont_direccion">
+          <input type="text" placeholder="Direccion" v-model="direccion">
+        </div>
+        <div class="cont_opciones_boleta">
+          <p class="text_option">Pagar boleta?</p>
+          <select v-model="selectedBoleta">
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div class="cont_btn_registro">
+          <button class="btn_registro" @click="registrar()">Registrar</button>
+        </div>
+      </div>
+    </div>
+    <div class="cuerpo_info" v-if="cuerpo">
+      <div class="cont_info_body">
+        <div class="cont_titulo_body">
+          <p class="text_body">Información</p>
+        </div>
+        <div class="cont_info_loteria">
+          <div class="cont_trofeo">
+            <div class="cont_img_t">
+              <img src="../img/trofeo.png" class="img_trofeo">
             </div>
-            <div class="cuerpo_info">
-              <p>{{ premio }}</p>
+            <div class="cont_text_t">
+              <p class="text_trofeo">{{ premio_Verificado }}</p>
             </div>
-            <div class="cuerpo_info">
-              <p>{{ valor_boleta }}</p>
+          </div>
+          <div class="cont_precio">
+            <div class="cont_img_p">
+              <img src="../img/simbolo-de-dolar.png" class="img_dolar">
             </div>
-            <div class="cuerpo_info">
-              <p>{{ seleccion_loteria }}</p>
+            <div class="cont_text_p">
+              <p class="text_precio">{{ Precio_Verificado }}</p>
             </div>
-            <div class="cuerpo_info">
-              <p>{{ fecha }}</p>
+          </div>
+          <div class="cont_loteria">
+            <div class="cont_img_l">
+              <img src="../img/banco.png" class="img_museo">
             </div>
-            <div class="cuerpo_info">
-              <button class="editar_info" @click="editar_info()">EDITAR</button>
+            <div class="cont_text_l">
+              <p class="text_loteria">{{ selectedLoteria_Verificado }}</p>
+            </div>
+          </div>
+          <div class="cont_calendario">
+            <div class="cont_img_c">
+              <img src="../img/calendario.png" class="img_calendario">
+            </div>
+            <div class="cont_text_c">
+              <p class="text_calendario">{{ fecha_Verificado }}</p>
+            </div>
+          </div>
+          <div class="cont_btn_editar">
+            <button class="btn_editar" @click="editarTalonario()">Editar</button>
+          </div>
+        </div>
+      </div>
+      <div class="conte_balotas">
+        <div v-for="(boleta, i) in boleta" :key="i" :class="getBoletaColor(boleta.estado)">
+          <div class="cont_balota" @click="comprarBoleta(i)">
+            <div class="cont_num_balota">
+              <p class="text_num_balota">{{ boleta.item }}</p>
             </div>
           </div>
         </div>
       </div>
-      <div
-        class="modal"
-        tabindex="-1"
-        :style="bd ? 'display:block' : 'display:none'"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Configura tu talonario</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                @click="bd = false"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <input
-                type="number"
-                value="premio"
-                placeholder="Ingrese el premio"
-                v-model="premio"
-              />
-              <br />
-
-              <input
-                type="number"
-                value="valor_boleta"
-                placeholder="Ingrese el valor de la boleta"
-                v-model="valor_boleta"
-              />
-              <br />
-              <label for="#">Seleccione una loteria</label>
-              <select v-model="seleccion_loteria">
-                <option value="Dorado Mañana">Dorado Mañana</option>
-                <option value="Dorado Tarde">Dorado Tarde</option>
-                <option value="Santander">Santander</option>
-                <option value="Culona">Culona</option>
-                <option value="Boyaca">Boyaca</option>
-                <option value="Cafeterito">Cafeterito</option>
-                <option value="Cundinamarca">Cundinamarca</option>
-              </select>
-              <br />
-              <label for="#">Seleccione el número de puestos</label>
-              <select v-model="seleccion_numboletas">
-                <option value="0-99">0-99</option>
-                <option value="0-999">0-999</option>
-                <option value="0-9999">0-9999</option>
-              </select>
-              <br />
-
-              <input type="date" value="fecha_n" v-model="fecha" />
-            </div>
-
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="bd = false"
-              >
-                Cerrar
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="crearBalotas()"
-              >
-                Guardar
-              </button>
-            </div>
+      <div class="cont_acciones">
+        <div class="cont_titulo_acciones">
+          <p class="text_acciones">Acciones</p>
+        </div>
+        <div class="cont_info_acciones">
+          <div class="cont_btn1">
+            <button class="btn1">Estado</button>
+          </div>
+          <div class="cont_btn2">
+            <button class="btn2" @click="listarBoletas()">Listar tus boletas</button>
+          </div>
+          <div class="cont_btn3">
+            <button class="btn3" @click="personalizarColores()">Personalizar talonario</button>
+          </div>
+          <div class="cont_btn4">
+            <button class="btn4" @click="imprimir()">Generar PDF</button>
           </div>
         </div>
       </div>
-      <footer class="footer">
-        <div class="container">
-          <span class="text_pie"
-            >©Copyright 2024 - Todos los derechos reservados</span
-          >
+    </div>
+    <div class="cont_balotas_compradas" v-if="balotasCompradas">
+      <div>
+        <table class="tabla_boletas">
+          <tr>
+            <th>Numero de boleta</th>
+            <th>Nombre</th>
+            <th>Telefono</th>
+            <th>Direccion</th>
+            <th>Estado de pago</th>
+          </tr>
+          <tr class="balotas_compradas" v-for="(boletasCompradas, i) in boletasCompradas" :key="i">
+            <td>{{ boletasCompradas.numero }}</td>
+            <td>{{ boletasCompradas.nombre }}</td>
+            <td>{{ boletasCompradas.telefono }}</td>
+            <td>{{ boletasCompradas.direccion }}</td>
+            <td>{{ boletasCompradas.pago }}</td>
+          </tr>
+        </table>
+        <button class="button_atras" @click="atras()">Regresar</button>
+      </div>
+    </div>
+    <div class="cont_options_boletas" v-if="cont_options_boletas">
+      <div class="options_boletas">
+        <div class="cont_btn_datos">
+          <button @click="DatosDueño()">Información dueño</button>
         </div>
-      </footer>
+        <div class="cont_btn_pagar" v-if="pagarBoleta">
+          <button @click="PagarBoleta()">Pagar boleta</button>
+        </div>
+        <div class="cont_btn_liberar">
+          <button @click="liberarBalota()">Liberar balota</button>
+        </div>
+        <div class="cont_btn_atras">
+          <button @click="atras2()">Regresar</button>
+        </div>
+      </div>
+    </div>
+    <div class="cont_datos_dueño" v-if="cont_datos_dueño">
+      <div class="datos_dueño">
+        <div class="info_nombre">
+          <p class="text_info_nombre">Nombre:</p>
+          <p class="text_nombre">{{ dueño.nombre }}</p>
+        </div>
+        <div class="info_telefono">
+          <p class="text_info_telefono">Telefono:</p>
+          <p class="text_telefono">{{ dueño.telefono }}</p>
+        </div>
+        <div class="info_direccion">
+          <p class="text_info_direccion">Direccion:</p>
+          <p class="text_direccion">{{ dueño.direccion }}</p>
+        </div>
+        <div class="info_pago">
+          <p class="text_info_pago">Estado</p>
+          <p class="text_pago">{{ dueño.pago }}</p>
+        </div>
+        <div class="cont_btn_atras">
+          <button @click="atras3()">Regresar</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-
 <script setup>
-import { ref } from "vue";
-let premio = ref("");
-let valor_boleta = ref("");
-let seleccion_loteria = ref("");
-let fecha = ref("");
-let seleccion_numboletas = ref("");
-let bd = ref(true);
-let registro_balota = ref(false);
-let nombre_persona = ref("");
-let boletas_adquirir = ref("");
-let telefono = ref("");
-let direccion = ref("");
-let seleccion_pago = ref("");
-let card1 = ref(false);
-let info_compra = ref("")
-let acciones= ref(false)
+import { ref } from 'vue';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
-const balotas = ref([]);
-const balotas_compradas = ref([]);
+jsPDF.autoTable = autoTable;
 
-const crearBalotas = () => {
-  const [start, end] = seleccion_numboletas.value.split("-").map(Number);
-  card1.value = true;
-  for (let i = start; i <= end; i++) {
-    balotas.value.push({
-      item: i,
+const premio = ref('');
+const premio_Verificado = ref('');
+const Precio = ref('');
+const Precio_Verificado = ref('');
+const selectedLoteria = ref('');
+const selectedLoteria_Verificado = ref('');
+const selectedCantidad = ref('');
+const selectedBoleta = ref('');
+const fecha = ref('');
+const fecha_Verificado = ref('');
+const nombre = ref('');
+const telefono = ref('');
+const direccion = ref('');
+const pago = ref('');
+const RegistroTalonario = ref(true);
+const RegistrarDueño = ref(false);
+const cuerpo = ref(false);
+const boletaSeleccionada = ref(null);
+const balotasCompradas = ref(false);
+const estado = ref(0);
+const cont_options_boletas = ref(false);
+const pagarBoleta = ref(false);
+const estadoBoleta = ref('');
+const alerta = ref('');
+const cont_datos_dueño = ref(false);
+const id = ref(0);
+let i = ref(0);
+
+const boleta = ref([]);
+const boletasCompradas = ref([]);
+const dueño = ref([]);
+
+const ocultarAlerta = () => {
+  setTimeout(() => {
+    alerta.value = '';
+    Alerta();
+  }, 2500);
+};
+
+const Alerta = () => {
+  if (alerta.value !== '') {
+    return 'alerta2';
+  }
+  else {
+    return 'alerta';
+  }
+};
+
+const crearTalonario = () => {
+  if (premio.value === '' || Precio.value === '' || selectedLoteria.value === '' || selectedCantidad.value === '' || fecha.value === '') {
+    alerta.value = 'Todos los campos son obligatorios';
+    ocultarAlerta();
+    return;
+  }
+  else {
+    premio_Verificado.value = premio.value;
+    Precio_Verificado.value = Precio.value;
+    selectedLoteria_Verificado.value = selectedLoteria.value;
+    fecha_Verificado.value = fecha.value;
+    const cantidad = selectedCantidad.value;
+
+    for (let i = 0; i < cantidad; i++) {
+      boleta.value.push({
+        item: i + 1,
+        estado: estado.value,
+      });
+    }
+    RegistroTalonario.value = false;
+    cuerpo.value = true;
+  }
+};
+
+const comprarBoleta = (index) => {
+  boletaSeleccionada.value = index;
+  if (boleta.value[index].estado === 0) {
+    RegistrarDueño.value = true;
+    cuerpo.value = false;
+  }
+  else if (boleta.value[index].estado === 1) {
+    cont_options_boletas.value = true;
+    pagarBoleta.value = false;
+    cuerpo.value = false;
+    i = boletasCompradas.value.findIndex((boletaComprada) => {
+      return boletaComprada.numero === boleta.value[index].item;
     });
   }
-
-  bd.value = false;
+  else if (boleta.value[index].estado === 2) {
+    cont_options_boletas.value = true;
+    pagarBoleta.value = true;
+    cuerpo.value = false;
+    i = boletasCompradas.value.findIndex((boletaComprada) => {
+      return boletaComprada.numero === boleta.value[index].item;
+    });
+  }
 };
-let balota_elegida = ref(null);
 
-const registrar_balota = (i) => {
-  balota_elegida.value = i;
-  registro_balota.value = true;
+const registrar = () => {
+  if (nombre.value === '' || telefono.value === '' || direccion.value === '' || selectedBoleta.value === '') {
+    alerta.value = 'Todos los campos son obligatorios';
+    ocultarAlerta();
+    return;
+  }
+  else {
+    if (selectedBoleta.value === 'Si') {
+      estado.value = 1;
+      estadoBoleta.value = "Pagada";
+    }
+    else {
+      estado.value = 2;
+      estadoBoleta.value = "No pagada";
+    }
+    boletasCompradas.value.push({
+      id: id.value++,
+      numero: boleta.value[boletaSeleccionada.value].item,
+      nombre: nombre.value,
+      telefono: telefono.value,
+      direccion: direccion.value,
+      pago: estadoBoleta.value,
+    });
+    boleta.value[boletaSeleccionada.value].estado = estado.value;
+    nombre.value = '';
+    telefono.value = '';
+    direccion.value = '';
+    pago.value = '';
+    selectedBoleta.value = '';
+    estado.value = 0;
+    RegistrarDueño.value = false;
+    cuerpo.value = true;
+  }
 };
 
-const agregar = () => {
-  registro_balota.value = false;
-  balotas_compradas.value.push({
-    numero: balotas.value[balota_elegida.value].item,
-    nombre: nombre_persona.value,
-    telefono: telefono.value,
-    direccion: direccion.value,
-    pagos: seleccion_pago.value,
+const DatosDueño = () => {
+  cont_datos_dueño.value = true;
+  cont_options_boletas.value = false;
+  cuerpo.value = false;
+
+  dueño.value = {
+    nombre: boletasCompradas.value[i].nombre,
+    telefono: boletasCompradas.value[i].telefono,
+    direccion: boletasCompradas.value[i].direccion,
+    pago: boletasCompradas.value[i].pago,
+  };
+};
+
+
+const PagarBoleta = () => {
+  boleta.value[boletaSeleccionada.value].estado = 1;
+  cont_options_boletas.value = false;
+  cuerpo.value = true;
+};
+
+const liberarBalota = () => {
+  const selectedBoletaIndex = boletaSeleccionada.value;
+  boleta.value[selectedBoletaIndex].estado = 0;
+  cont_options_boletas.value = false;
+  cuerpo.value = true;
+
+  boletasCompradas.value = boletasCompradas.value.filter((boletaComprada) => {
+    return boletaComprada.numero !== boleta.value[selectedBoletaIndex].item;
   });
 };
-console.log(balotas_compradas);
+
+const atras = () => {
+  balotasCompradas.value = false;
+  cuerpo.value = true;
+};
+
+const atras2 = () => {
+  cont_options_boletas.value = false;
+  cuerpo.value = true;
+};
+
+const atras3 = () => {
+  cont_datos_dueño.value = false;
+  cuerpo.value = true;
+};
+
+const getBoletaColor = (estado) => {
+  switch (estado) {
+    case 0:
+      return 'ClaseInicial';
+    case 1:
+      return 'ClasePagada';
+    case 2:
+      return 'ClaseNoPagada';
+  }
+};
+
+const editarTalonario = () => {
+  premio.value = '';
+  Precio.value = '';
+  selectedLoteria.value = '';
+  selectedCantidad.value = '';
+  fecha.value = '';
+  RegistroTalonario.value = true;
+  cuerpo.value = false;
+  boleta.value = [];
+};
+
+const listarBoletas = () => {
+  balotasCompradas.value = true;
+  cuerpo.value = false;
+};
+
+const personalizarColores = () => {
+};
+
+const imprimir = () => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(12);
+  doc.text("Resumen de boletas vendidas", 10, 10);
+
+  const tableData = boletasCompradas.value.map((boleta, index) => [
+    boleta.numero,
+    boleta.nombre,
+    boleta.telefono,
+    boleta.direccion,
+    boleta.pago,
+  ]);
+
+  doc.autoTable({
+    head: [["Boleta", "Nombre", "Teléfono", "Dirección", "Pago"]],
+    body: tableData,
+    startY: 20,
+  });
+
+  const totalBoletas = boletasCompradas.value.length;
+  doc.text(`Total de balotas compradas: ${totalBoletas}`, 10, doc.autoTable.previous.finalY + 10);
+
+  doc.save("reporte.pdf");
+};
 </script>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
+<style scoped>
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-  background-color: white;
+.cont_titulo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 14vh;
+  background-color: #262697;
+  color: #ffffff;
+  text-transform: uppercase;
 }
 
-.contenedor {
+.text_titulo {
+  font-size: 40px;
+}
+
+.alerta {
+  display: none;
+}
+
+.alerta2 {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100vh;
 }
 
-.titulo {
-  height: 100px;
+.cont_alerta {
   display: flex;
-
-  width: 100%;
-  align-items: center;
   justify-content: center;
-  background-color: rgb(38, 38, 151);
-}
-
-.text_tit {
-  font-size: 40px;
-  color: white;
-}
-
-.text_pie {
-  font-size: 20px;
-  color: white;
-}
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  height: 40px;
-  background-color: rgb(38, 38, 151);
+  align-items: center;
   text-align: center;
-  padding-top: 5px;
+  background-color: #2525bd;
+  color: #ffffff;
+  width: 20%;
+  height: 15vh;
+  border-radius: 10px;
 }
 
-.modal-body {
-  display: grid;
-  gap: 1px;
+.text_alerta {
+  font-size: 20px;
 }
 
-.cuerpo {
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  height: 86vh;
 }
 
-.cont_2 {
-  width: 50%;
+.cont_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  background-color: #dbdbdbf2;
+  border-radius: 10px;
+}
+
+.cont_titulo_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+}
+
+.cont_text_premio, .cont_text_precio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.cont_tipos_loterias, .cont_num_boletas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.cont_fecha {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.cont_text_premio input, .cont_text_precio input, .cont_tipos_loterias select, .cont_num_boletas select, .cont_fecha input {
+  width: 90%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+}
+
+.cont_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.btn {
+  width: 90%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262697;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.cont_forma_registro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 86vh;
+}
+
+.cont_form_registro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  background-color: #dbdbdbf2;
+  border-radius: 10px;
+}
+
+.nam_div_registro {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.cont_nombre, .cont_telefono, .cont_direccion, .cont_btn_registro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.cont_opciones_boleta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+} 
+
+.cont_nombre input, .cont_telefono input, .cont_direccion input {
+  width: 90%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+}
+
+.cont_opciones_boleta select {
+  width: 90%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+}
+
+.cont_btn_registro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.btn_registro {
+  width: 90%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262697;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.cuerpo_info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 86vh;
+}
+
+.cont_info_body {
+  width: 20%;
+  background-color: #dbdbdbf2;
+  border-radius: 10px;
+  margin-left: 10px;
+  padding: 8px 1%;
+}
+
+.cont_titulo_body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+}
+
+.cont_trofeo, .cont_precio, .cont_loteria, .cont_calendario, .cont_btn_editar {
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.cont_img_t, .cont_img_p, .cont_img_l, .cont_img_c {
+  width: 20%;
+}
+
+.cont_text_t, .cont_text_p, .cont_text_l, .cont_text_c {
+  display: flex;
+  align-items: center;
+  margin-left: 5%;
+  width: 80%;
+}
+
+.img_trofeo, .img_dolar, .img_museo, .img_calendario {
+  width: 90%;
+}
+
+.cont_btn_editar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn_editar {
+  width: 90%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262697;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.btn_editar:hover {
+  transform: scale(1.1);
+}
+
+.conte_balotas {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  margin-top: 50px;
-}
-.balotas {
-  display: flex;
-  flex-wrap: wrap;
 }
 
-.balota {
+.ClaseInicial {
+  background-color: #007bff;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: blue;
-  color: white;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   margin: 5px;
   cursor: pointer;
 }
 
-.balota:hover {
-  transform: scale(1.1);
-}
-
-.cont1 {
-  width: 100%;
-  height: auto;
+.ClasePagada {
+  background-color: #00ff00;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 5px;
+  cursor: pointer;
 }
 
-.card1 {
-  width: 70%;
-  height: auto;
-  display: grid;
-  grid-template-rows: repeat(6, 1fr);
-  background-color: blue;
+.ClaseNoPagada {
+  background-color: #ff0000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  cursor: pointer;
 }
 
-.info {
-  font-size: 30px;
-  color: rgb(0, 0, 0);
+.ClaseInicial:hover, .ClasePagada:hover, .ClaseNoPagada:hover {
+  transform: scale(1.2);
+}
+
+.text_num_balota {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.cont_acciones {
+  width: 20%;
+  background-color: #dbdbdbf2;
+  border-radius: 10px;
+  margin-right: 10px;
+  padding: 8px 1%;
+}
+
+.cont_titulo_acciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+}
+
+.cont_info_acciones {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.cont_btn1, .cont_btn2, .cont_btn3, .cont_btn4 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn1, .btn2, .btn3, .btn4 {
+  width: 90%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262697;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.tabla_boletas {
+  width: 90%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.tabla_boletas th, .tabla_boletas td {
+  border: 1px solid #000000;
+  padding: 8px;
+  text-align: center;
+}
+
+.balotas_compradas {
+  background-color: #dbdbdbf2;
+}
+
+.button_atras {
+  width: 100px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262697;
+  color: #ffffff;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button_atras:hover {
+  transform: scale(1.1);
+}
+
+.cont_options_boletas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 86vh;
+}
+
+.options_boletas {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  background-color: #dbdbdbf2;
+  border-radius: 10px;
+  padding: 20px 2%;
+}
+
+.cont_btn_datos, .cont_btn_pagar, .cont_btn_liberar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.cont_btn_atras{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.cont_btn_datos button, .cont_btn_pagar button, .cont_btn_liberar button, .cont_btn_atras button {
+  width: 90%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262697;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.cont_btn_datos button:hover, .cont_btn_pagar button:hover, .cont_btn_liberar button:hover, .cont_btn_atras button:hover {
+  transform: scale(1.1);
+}
+
+.cont_datos_dueño {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 86vh;
+}
+
+.datos_dueño {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  background-color: #dbdbdbf2;
+  border-radius: 10px;
+  padding: 20px 2%;
+}
+
+.info_nombre, .info_telefono, .info_direccion, .info_pago {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.text_info_nombre, .text_info_telefono, .text_info_direccion, .text_info_pago {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.text_nombre, .text_telefono, .text_direccion, .text_pago {
+  font-size: 20px;
+}
+
+@media(max-width: 1000px){  
+  .cuerpo_info{
+    flex-direction: column;
+  }
+
+  .cont_info_body, .cont_acciones{
+    width: 40%;
+    margin: 30px 0;
+
+  }
+
+  .form, .cont_form_registro, .cont_alerta, .options_boletas, .datos_dueño{
+    width: 40%;
+  }
+}
+
+@media(max-width: 550px){
+  .form, .cont_form_registro, .cont_alerta, .options_boletas,.datos_dueño {
+    width: 80%;
+  }
+}
+
+@media(max-width: 530px){
+  .conte_balotas{
+    grid-template-columns: repeat(8, 1fr);
+  }
 }
 </style>
