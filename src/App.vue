@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <div class="cont_titulo" :style="{ backgroundColor: color }">
+    <div class="cont_titulo">
       <h1 class="text_titulo">Talonario</h1>
     </div>
     <div :class="Alerta()">
@@ -206,16 +206,6 @@
         </div>
       </div>
     </div>
-    <div class="cont_personalizar" v-if="contPersonalizar">
-      <div class="sub_cont_personalizar">
-        <div class="cont_input_color">
-          <input type="color" v-model="color">
-        </div>
-        <div class="cont_btn_atras">
-          <button @click="atras4()">Regresar</button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -251,8 +241,6 @@ const pagarBoleta = ref(false);
 const estadoBoleta = ref('');
 const alerta = ref('');
 const cont_datos_dueño = ref(false);
-const contPersonalizar = ref(false);
-const color = ref('#262697');
 const id = ref(0);
 let i = ref(0);
 
@@ -405,11 +393,6 @@ const atras3 = () => {
   cuerpo.value = true;
 };
 
-const atras4 = () => {
-  contPersonalizar.value = false;
-  cuerpo.value = true;
-};
-
 const getBoletaColor = (estado) => {
   switch (estado) {
     case 0:
@@ -438,8 +421,6 @@ const listarBoletas = () => {
 };
 
 const personalizarColores = () => {
-  contPersonalizar.value = true;
-  cuerpo.value = false;
 };
 
 const imprimir = () => {
@@ -484,6 +465,7 @@ const imprimir = () => {
   align-items: center;
   width: 100%;
   height: 14vh;
+  background-color: #262697;
   color: #ffffff;
   text-transform: uppercase;
 }
@@ -950,54 +932,6 @@ const imprimir = () => {
   font-size: 20px;
 }
 
-.cont_personalizar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 86vh;
-}
-
-.sub_cont_personalizar {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 20%;
-  background-color: #dbdbdbf2;
-  border-radius: 10px;
-  padding: 20px 2%;
-}
-
-.cont_input_color {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 15px;
-}
-
-.cont_btn_atras {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.cont_input_color input, .cont_btn_atras button {
-  width: 90%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #262697;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.cont_btn_atras button:hover {
-  transform: scale(1.1);
-}
-
 @media(max-width: 1000px){  
   .cuerpo_info{
     flex-direction: column;
@@ -1009,13 +943,13 @@ const imprimir = () => {
 
   }
 
-  .form, .cont_form_registro, .cont_alerta, .options_boletas, .datos_dueño, .sub_cont_personalizar {
+  .form, .cont_form_registro, .cont_alerta, .options_boletas, .datos_dueño{
     width: 40%;
   }
 }
 
 @media(max-width: 550px){
-  .form, .cont_form_registro, .cont_alerta, .options_boletas,.datos_dueño, .sub_cont_personalizar {
+  .form, .cont_form_registro, .cont_alerta, .options_boletas,.datos_dueño {
     width: 80%;
   }
 }
