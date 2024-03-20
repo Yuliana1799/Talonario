@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app" :style="{ backgroundColor: color2 }">
     <div class="cont_titulo">
       <h1 class="text_titulo">Talonario</h1>
     </div>
@@ -10,7 +10,7 @@
     </div>
     <div class="container" v-if="RegistroTalonario">
       <div class="cont_form">
-        <div class="form">
+        <div :style="{ backgroundColor: color1 }" class="form">
           <div class="cont_titulo_form">
             <p class="text_titulo_form">Crear talonario</p>
           </div>
@@ -18,7 +18,7 @@
             <input type="text" placeholder="Ingrese el premio" v-model="premio">
           </div>
           <div class="cont_text_precio">
-            <input type="text" placeholder="Ingrese el valor de la balota" v-model="Precio">
+            <input type="number" placeholder="Ingrese el valor de la balota" v-model="Precio">
           </div>
           <div class="cont_tipos_loterias">
             <p class="text_tipos_loterias">Tipo de loteria</p>
@@ -42,22 +42,22 @@
             </select>
           </div>
           <div class="cont_fecha">
-            <input type="date" v-model="fecha">
+            <input type="date" v-model="fecha" @change="validarFecha">
           </div>
           <div class="cont_btn">
-            <button class="btn" @click="crearTalonario()">Crear</button>
+            <button :style="{ backgroundColor: color3 }" class="btn" @click="crearTalonario()">Crear</button>
           </div>
         </div>
       </div>
     </div>
     <div class="cont_forma_registro" v-if="RegistrarDueño">
-      <div class="cont_form_registro">
+      <div :style="{ backgroundColor: color1 }" class="cont_form_registro">
         <p class="nam_div_registro">Registro de boletas</p>
         <div class="cont_nombre">
           <input type="text" placeholder="Nombre" v-model="nombre">
         </div>
         <div class="cont_telefono">
-          <input type="text" placeholder="Telefono" v-model="telefono">
+          <input type="number" placeholder="Telefono" v-model="telefono">
         </div>
         <div class="cont_direccion">
           <input type="text" placeholder="Direccion" v-model="direccion">
@@ -70,7 +70,10 @@
           </select>
         </div>
         <div class="cont_btn_registro">
-          <button class="btn_registro" @click="registrar()">Registrar</button>
+          <button :style="{ backgroundColor: color3 }" class="btn_registro" @click="registrar()">Registrar</button>
+        </div>
+        <div class="cont_btn_atras">
+          <button :style="{ backgroundColor: color3 }" @click="atras5()">Atrás</button>
         </div>
       </div>
     </div>
@@ -113,7 +116,7 @@
             </div>
           </div>
           <div class="cont_btn_editar">
-            <button class="btn_editar" @click="editarTalonario()">Editar</button>
+            <button :style="{ backgroundColor: color3 }" class="btn_editar" @click="editarTalonario()">Editar</button>
           </div>
         </div>
       </div>
@@ -132,22 +135,23 @@
         </div>
         <div class="cont_info_acciones">
           <div class="cont_btn1">
-            <button class="btn1">Estado</button>
+            <button :style="{ backgroundColor: color3 }" class="btn1">Estado</button>
           </div>
           <div class="cont_btn2">
-            <button class="btn2" @click="listarBoletas()">Listar tus boletas</button>
+            <button :style="{ backgroundColor: color3 }" class="btn2" @click="listarBoletas()">Listar tus boletas</button>
           </div>
           <div class="cont_btn3">
-            <button class="btn3" @click="personalizarColores()">Personalizar talonario</button>
+            <button :style="{ backgroundColor: color3 }" class="btn3" @click="personalizarColores()">Personalizar talonario</button>
           </div>
           <div class="cont_btn4">
-            <button class="btn4" @click="imprimir()">Generar PDF</button>
+            <button :style="{ backgroundColor: color3 }" class="btn4" @click="imprimir()">Generar PDF</button>
           </div>
         </div>
       </div>
     </div>
     <div class="cont_balotas_compradas" v-if="balotasCompradas">
       <div>
+        <button :style="{ backgroundColor: color3 }" class="button_atras" @click="atras()">Regresar</button>
         <table class="tabla_boletas">
           <tr>
             <th>Numero de boleta</th>
@@ -164,22 +168,22 @@
             <td>{{ boletasCompradas.pago }}</td>
           </tr>
         </table>
-        <button class="button_atras" @click="atras()">Regresar</button>
+
       </div>
     </div>
     <div class="cont_options_boletas" v-if="cont_options_boletas">
       <div class="options_boletas">
         <div class="cont_btn_datos">
-          <button @click="DatosDueño()">Información dueño</button>
+          <button :style="{ backgroundColor: color3 }" @click="DatosDueño()">Información dueño</button>
         </div>
         <div class="cont_btn_pagar" v-if="pagarBoleta">
-          <button @click="PagarBoleta()">Pagar boleta</button>
+          <button :style="{ backgroundColor: color3 }" @click="PagarBoleta()">Pagar boleta</button>
         </div>
         <div class="cont_btn_liberar">
-          <button @click="liberarBalota()">Liberar balota</button>
+          <button :style="{ backgroundColor: color3 }" @click="liberarBalota()">Liberar balota</button>
         </div>
         <div class="cont_btn_atras">
-          <button @click="atras2()">Regresar</button>
+          <button :style="{ backgroundColor: color3 }" @click="atras2()">Regresar</button>
         </div>
       </div>
     </div>
@@ -202,7 +206,26 @@
           <p class="text_pago">{{ dueño.pago }}</p>
         </div>
         <div class="cont_btn_atras">
-          <button @click="atras3()">Regresar</button>
+          <button :style="{ backgroundColor: color3 }" @click="atras3()">Atrás</button>
+        </div>
+      </div>
+    </div>
+    <div class="cont_colores" v-if="contColores">
+      <div class="colores">
+        <div class="cont_color1">
+          <p class="text_color1">Formularios</p>
+          <input type="color" v-model="color1" class="color1">
+        </div>
+        <div class="cont_color2">
+          <p class="text_color2">Fondo</p>
+          <input type="color" v-model="color2" class="color2">
+        </div>
+        <div class="cont_color3">
+          <p class="text_color3">Botones</p>
+          <input type="color" v-model="color3" class="color3">
+        </div>
+        <div class="cont_btn_atras">
+          <button :style="{ backgroundColor: color3 }" @click="atras4()">Atrás</button>
         </div>
       </div>
     </div>
@@ -243,6 +266,10 @@ const alerta = ref('');
 const cont_datos_dueño = ref(false);
 const id = ref(0);
 let i = ref(0);
+const contColores = ref(false);
+const color1 = ref('#dbdbdb');
+const color2 = ref('#ffffff');
+const color3 = ref('#262697');
 
 const boleta = ref([]);
 const boletasCompradas = ref([]);
@@ -284,7 +311,7 @@ const crearTalonario = () => {
       });
     }
     RegistroTalonario.value = false;
-    cuerpo.value = true;
+    cuerpo.value = true; 
   }
 };
 
@@ -312,12 +339,25 @@ const comprarBoleta = (index) => {
   }
 };
 
+const validarFecha = () => {
+  const fechaSeleccionada = new Date(fecha.value);
+  const fechaHoy = new Date();
+
+  fechaHoy.setHours(0, 0, 0, 0); // Establecer la hora actual a las 00:00:00
+
+  if (fechaSeleccionada < fechaHoy) {
+    alerta.value = 'Elige una fecha posterior a la actual';
+    fecha.value = ''; // Limpiar el valor del input de fecha
+    ocultarAlerta();
+  }
+};
 const registrar = () => {
   if (nombre.value === '' || telefono.value === '' || direccion.value === '' || selectedBoleta.value === '') {
     alerta.value = 'Todos los campos son obligatorios';
     ocultarAlerta();
     return;
   }
+
   else {
     if (selectedBoleta.value === 'Si') {
       estado.value = 1;
@@ -363,6 +403,7 @@ const DatosDueño = () => {
 
 const PagarBoleta = () => {
   boleta.value[boletaSeleccionada.value].estado = 1;
+  boletasCompradas.value[i].pago = "Pagada";
   cont_options_boletas.value = false;
   cuerpo.value = true;
 };
@@ -390,6 +431,16 @@ const atras2 = () => {
 
 const atras3 = () => {
   cont_datos_dueño.value = false;
+  cuerpo.value = true;
+};
+
+const atras4 = () => {
+  contColores.value = false;
+  cuerpo.value = true;
+};
+
+const atras5 = () => {
+  RegistrarDueño.value = false;
   cuerpo.value = true;
 };
 
@@ -421,6 +472,8 @@ const listarBoletas = () => {
 };
 
 const personalizarColores = () => {
+  contColores.value = true;
+  cuerpo.value = false;
 };
 
 const imprimir = () => {
@@ -524,7 +577,6 @@ const imprimir = () => {
   justify-content: center;
   align-items: center;
   width: 20%;
-  background-color: #dbdbdbf2;
   border-radius: 10px;
 }
 
@@ -537,7 +589,8 @@ const imprimir = () => {
   font-size: 20px;
 }
 
-.cont_text_premio, .cont_text_precio {
+.cont_text_premio,
+.cont_text_precio {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -545,7 +598,8 @@ const imprimir = () => {
   margin-bottom: 15px;
 }
 
-.cont_tipos_loterias, .cont_num_boletas {
+.cont_tipos_loterias,
+.cont_num_boletas {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -560,7 +614,11 @@ const imprimir = () => {
   width: 100%;
 }
 
-.cont_text_premio input, .cont_text_precio input, .cont_tipos_loterias select, .cont_num_boletas select, .cont_fecha input {
+.cont_text_premio input,
+.cont_text_precio input,
+.cont_tipos_loterias select,
+.cont_num_boletas select,
+.cont_fecha input {
   width: 90%;
   padding: 8px;
   border-radius: 5px;
@@ -580,7 +638,6 @@ const imprimir = () => {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #262697;
   color: #ffffff;
   cursor: pointer;
 }
@@ -599,7 +656,6 @@ const imprimir = () => {
   justify-content: center;
   align-items: center;
   width: 20%;
-  background-color: #dbdbdbf2;
   border-radius: 10px;
 }
 
@@ -608,7 +664,10 @@ const imprimir = () => {
   margin-bottom: 15px;
 }
 
-.cont_nombre, .cont_telefono, .cont_direccion, .cont_btn_registro {
+.cont_nombre,
+.cont_telefono,
+.cont_direccion,
+.cont_btn_registro {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -622,9 +681,11 @@ const imprimir = () => {
   align-items: center;
   width: 100%;
   margin-bottom: 15px;
-} 
+}
 
-.cont_nombre input, .cont_telefono input, .cont_direccion input {
+.cont_nombre input,
+.cont_telefono input,
+.cont_direccion input {
   width: 90%;
   padding: 8px;
   border-radius: 5px;
@@ -651,7 +712,6 @@ const imprimir = () => {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #262697;
   color: #ffffff;
   cursor: pointer;
 }
@@ -681,24 +741,37 @@ const imprimir = () => {
   font-size: 20px;
 }
 
-.cont_trofeo, .cont_precio, .cont_loteria, .cont_calendario, .cont_btn_editar {
+.cont_trofeo,
+.cont_precio,
+.cont_loteria,
+.cont_calendario,
+.cont_btn_editar {
   display: flex;
   width: 100%;
   margin-bottom: 10px;
 }
 
-.cont_img_t, .cont_img_p, .cont_img_l, .cont_img_c {
+.cont_img_t,
+.cont_img_p,
+.cont_img_l,
+.cont_img_c {
   width: 20%;
 }
 
-.cont_text_t, .cont_text_p, .cont_text_l, .cont_text_c {
+.cont_text_t,
+.cont_text_p,
+.cont_text_l,
+.cont_text_c {
   display: flex;
   align-items: center;
   margin-left: 5%;
   width: 80%;
 }
 
-.img_trofeo, .img_dolar, .img_museo, .img_calendario {
+.img_trofeo,
+.img_dolar,
+.img_museo,
+.img_calendario {
   width: 90%;
 }
 
@@ -715,7 +788,6 @@ const imprimir = () => {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #262697;
   color: #ffffff;
   cursor: pointer;
 }
@@ -765,7 +837,9 @@ const imprimir = () => {
   cursor: pointer;
 }
 
-.ClaseInicial:hover, .ClasePagada:hover, .ClaseNoPagada:hover {
+.ClaseInicial:hover,
+.ClasePagada:hover,
+.ClaseNoPagada:hover {
   transform: scale(1.2);
 }
 
@@ -799,7 +873,10 @@ const imprimir = () => {
   width: 100%;
 }
 
-.cont_btn1, .cont_btn2, .cont_btn3, .cont_btn4 {
+.cont_btn1,
+.cont_btn2,
+.cont_btn3,
+.cont_btn4 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -807,12 +884,14 @@ const imprimir = () => {
   margin-bottom: 10px;
 }
 
-.btn1, .btn2, .btn3, .btn4 {
+.btn1,
+.btn2,
+.btn3,
+.btn4 {
   width: 90%;
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #262697;
   color: #ffffff;
   cursor: pointer;
 }
@@ -821,9 +900,11 @@ const imprimir = () => {
   width: 90%;
   border-collapse: collapse;
   margin: 0 auto;
+  margin-top: 10px;
 }
 
-.tabla_boletas th, .tabla_boletas td {
+.tabla_boletas th,
+.tabla_boletas td {
   border: 1px solid #000000;
   padding: 8px;
   text-align: center;
@@ -838,10 +919,10 @@ const imprimir = () => {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #262697;
   color: #ffffff;
   cursor: pointer;
   margin-top: 10px;
+  margin-left: 10px;
 }
 
 .button_atras:hover {
@@ -867,7 +948,9 @@ const imprimir = () => {
   padding: 20px 2%;
 }
 
-.cont_btn_datos, .cont_btn_pagar, .cont_btn_liberar{
+.cont_btn_datos,
+.cont_btn_pagar,
+.cont_btn_liberar {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -875,24 +958,29 @@ const imprimir = () => {
   margin-bottom: 15px;
 }
 
-.cont_btn_atras{
+.cont_btn_atras {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
 }
 
-.cont_btn_datos button, .cont_btn_pagar button, .cont_btn_liberar button, .cont_btn_atras button {
+.cont_btn_datos button,
+.cont_btn_pagar button,
+.cont_btn_liberar button,
+.cont_btn_atras button {
   width: 90%;
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #262697;
   color: #ffffff;
   cursor: pointer;
 }
 
-.cont_btn_datos button:hover, .cont_btn_pagar button:hover, .cont_btn_liberar button:hover, .cont_btn_atras button:hover {
+.cont_btn_datos button:hover,
+.cont_btn_pagar button:hover,
+.cont_btn_liberar button:hover,
+.cont_btn_atras button:hover {
   transform: scale(1.1);
 }
 
@@ -915,7 +1003,10 @@ const imprimir = () => {
   padding: 20px 2%;
 }
 
-.info_nombre, .info_telefono, .info_direccion, .info_pago {
+.info_nombre,
+.info_telefono,
+.info_direccion,
+.info_pago {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -923,39 +1014,102 @@ const imprimir = () => {
   margin-bottom: 15px;
 }
 
-.text_info_nombre, .text_info_telefono, .text_info_direccion, .text_info_pago {
+.text_info_nombre,
+.text_info_telefono,
+.text_info_direccion,
+.text_info_pago {
   font-size: 20px;
   margin-right: 10px;
 }
 
-.text_nombre, .text_telefono, .text_direccion, .text_pago {
+.text_nombre,
+.text_telefono,
+.text_direccion,
+.text_pago {
   font-size: 20px;
 }
 
-@media(max-width: 1000px){  
-  .cuerpo_info{
+.cont_colores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 86vh;
+}
+
+.colores {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20%;
+  background-color: #dbdbdb;
+  border-radius: 10px;
+  padding: 20px 2%;
+}
+
+.cont_color1,
+.cont_color2,
+.cont_color3{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.text_color1,
+.text_color2,
+.text_color3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.color1,
+.color2,
+.color3 {
+  width: 90%;
+  border: none;
+  background: none;
+  height: 40px;
+  border-radius: 5px;
+}
+
+@media(max-width: 1000px) {
+  .cuerpo_info {
     flex-direction: column;
   }
 
-  .cont_info_body, .cont_acciones{
+  .cont_info_body,
+  .cont_acciones {
     width: 40%;
     margin: 30px 0;
 
   }
 
-  .form, .cont_form_registro, .cont_alerta, .options_boletas, .datos_dueño{
+  .form,
+  .cont_form_registro,
+  .cont_alerta,
+  .options_boletas,
+  .datos_dueño {
     width: 40%;
   }
 }
 
-@media(max-width: 550px){
-  .form, .cont_form_registro, .cont_alerta, .options_boletas,.datos_dueño {
+@media(max-width: 550px) {
+
+  .form,
+  .cont_form_registro,
+  .cont_alerta,
+  .options_boletas,
+  .datos_dueño {
     width: 80%;
   }
 }
 
-@media(max-width: 530px){
-  .conte_balotas{
+@media(max-width: 530px) {
+  .conte_balotas {
     grid-template-columns: repeat(8, 1fr);
   }
 }
