@@ -47,8 +47,12 @@
           <div class="cont_btn">
             <button :style="{ backgroundColor: color3 }" class="btn" @click="crearTalonario()">Crear</button>
           </div>
+          <div class="cont_btn_atras" v-if="cerrar_editar">
+            <button :style="{ backgroundColor: color3 }" @click="atras6()">Atrás</button>
+          </div>
         </div>
       </div>
+
     </div>
     <div class="cont_forma_registro" v-if="RegistrarDueño">
       <div :style="{ backgroundColor: color1 }" class="cont_form_registro">
@@ -124,7 +128,7 @@
         <div v-for="(boleta, i) in boleta" :key="i" :class="getBoletaColor(boleta.estado)">
           <div class="cont_balota" @click="comprarBoleta(i)">
             <div class="cont_num_balota">
-              <p class="text_num_balota">{{ boleta.item }}</p>
+              <p class="text_num_balota">{{ boleta.item - 1 }}</p>
             </div>
           </div>
         </div>
@@ -138,10 +142,12 @@
             <button :style="{ backgroundColor: color3 }" class="btn1">Estado</button>
           </div>
           <div class="cont_btn2">
-            <button :style="{ backgroundColor: color3 }" class="btn2" @click="listarBoletas()">Listar tus boletas</button>
+            <button :style="{ backgroundColor: color3 }" class="btn2" @click="listarBoletas()">Listar tus
+              boletas</button>
           </div>
           <div class="cont_btn3">
-            <button :style="{ backgroundColor: color3 }" class="btn3" @click="personalizarColores()">Personalizar talonario</button>
+            <button :style="{ backgroundColor: color3 }" class="btn3" @click="personalizarColores()">Personalizar
+              talonario</button>
           </div>
           <div class="cont_btn4">
             <button :style="{ backgroundColor: color3 }" class="btn4" @click="imprimir()">Generar PDF</button>
@@ -161,7 +167,7 @@
             <th>Estado de pago</th>
           </tr>
           <tr class="balotas_compradas" v-for="(boletasCompradas, i) in boletasCompradas" :key="i">
-            <td>{{ boletasCompradas.numero }}</td>
+            <td>{{ boletasCompradas.numero - 1}}</td>
             <td>{{ boletasCompradas.nombre }}</td>
             <td>{{ boletasCompradas.telefono }}</td>
             <td>{{ boletasCompradas.direccion }}</td>
@@ -204,6 +210,9 @@
         <div class="info_pago">
           <p class="text_info_pago">Estado</p>
           <p class="text_pago">{{ dueño.pago }}</p>
+        </div>
+        <div class="cont_btn_editar">
+          <button class="cont_btn_editar1" @click="editarDueño()">Editar</button>
         </div>
         <div class="cont_btn_atras">
           <button :style="{ backgroundColor: color3 }" @click="atras3()">Atrás</button>
@@ -270,10 +279,25 @@ const contColores = ref(false);
 const color1 = ref('#dbdbdb');
 const color2 = ref('#ffffff');
 const color3 = ref('#262697');
+const cerrar_editar = ref(false)
+
 
 const boleta = ref([]);
 const boletasCompradas = ref([]);
 const dueño = ref([]);
+
+const datosTalonario = ref({
+  premio: '',
+  Precio: '',
+  selectedLoteria: '',
+  selectedCantidad: '',
+  fecha: ''
+});
+
+
+
+
+
 
 const ocultarAlerta = () => {
   setTimeout(() => {
@@ -292,6 +316,7 @@ const Alerta = () => {
 };
 
 const crearTalonario = () => {
+  boleta.value = [];
   if (premio.value === '' || Precio.value === '' || selectedLoteria.value === '' || selectedCantidad.value === '' || fecha.value === '') {
     alerta.value = 'Todos los campos son obligatorios';
     ocultarAlerta();
@@ -311,7 +336,7 @@ const crearTalonario = () => {
       });
     }
     RegistroTalonario.value = false;
-    cuerpo.value = true; 
+    cuerpo.value = true;
   }
 };
 
@@ -347,7 +372,7 @@ const validarFecha = () => {
 
   if (fechaSeleccionada < fechaHoy) {
     alerta.value = 'Elige una fecha posterior a la actual';
-    fecha.value = ''; // Limpiar el valor del input de fecha
+    fecha.value = ''; 
     ocultarAlerta();
   }
 };
@@ -357,7 +382,6 @@ const registrar = () => {
     ocultarAlerta();
     return;
   }
-
   else {
     if (selectedBoleta.value === 'Si') {
       estado.value = 1;
@@ -367,7 +391,18 @@ const registrar = () => {
       estado.value = 2;
       estadoBoleta.value = "No pagada";
     }
-    boletasCompradas.value.push({
+
+    if (boletasCompradas.value.some(boletaComprada => boletaComprada.numero === boleta.value[boletaSeleccionada.value].item)) {
+      boletasCompradas.value.forEach(boletaComprada => {
+        if (boletaComprada.numero === boleta.value[boletaSeleccionada.value].item) {
+          boletaComprada.nombre = nombre.value;
+          boletaComprada.telefono = telefono.value;
+          boletaComprada.direccion = direccion.value;
+          boletaComprada.pago = estadoBoleta.value;
+        }
+      });
+    } else {
+      boletasCompradas.value.push({
       id: id.value++,
       numero: boleta.value[boletaSeleccionada.value].item,
       nombre: nombre.value,
@@ -375,6 +410,7 @@ const registrar = () => {
       direccion: direccion.value,
       pago: estadoBoleta.value,
     });
+    }
     boleta.value[boletaSeleccionada.value].estado = estado.value;
     nombre.value = '';
     telefono.value = '';
@@ -385,6 +421,7 @@ const registrar = () => {
     RegistrarDueño.value = false;
     cuerpo.value = true;
   }
+  console.log(boletasCompradas.value);
 };
 
 const DatosDueño = () => {
@@ -400,6 +437,19 @@ const DatosDueño = () => {
   };
 };
 
+const editarDueño = () => {
+  nombre.value = dueño.value.nombre;
+  telefono.value = dueño.value.telefono;
+  direccion.value = dueño.value.direccion;
+  if (dueño.value.pago === "Pagada") {
+    selectedBoleta.value = "Si";
+  }
+  else {
+    selectedBoleta.value = "No";
+  }
+  cont_datos_dueño.value = false;
+  RegistrarDueño.value = true;
+};
 
 const PagarBoleta = () => {
   boleta.value[boletaSeleccionada.value].estado = 1;
@@ -444,6 +494,10 @@ const atras5 = () => {
   cuerpo.value = true;
 };
 
+const atras6 = () => {
+  RegistroTalonario.value = false;
+  cuerpo.value = true;
+};
 const getBoletaColor = (estado) => {
   switch (estado) {
     case 0:
@@ -455,15 +509,18 @@ const getBoletaColor = (estado) => {
   }
 };
 
+
 const editarTalonario = () => {
-  premio.value = '';
-  Precio.value = '';
-  selectedLoteria.value = '';
-  selectedCantidad.value = '';
-  fecha.value = '';
+  datosTalonario.value = {
+    premio: premio_Verificado.value,
+    Precio: Precio_Verificado.value,
+    selectedLoteria: selectedLoteria_Verificado.value,
+    selectedCantidad: selectedCantidad.value,
+    fecha: fecha_Verificado.value
+  };
+  cerrar_editar.value = true
   RegistroTalonario.value = true;
   cuerpo.value = false;
-  boleta.value = [];
 };
 
 const listarBoletas = () => {
@@ -498,6 +555,15 @@ const imprimir = () => {
 
   const totalBoletas = boletasCompradas.value.length;
   doc.text(`Total de balotas compradas: ${totalBoletas}`, 10, doc.autoTable.previous.finalY + 10);
+
+  const totaldinerorecaudado = boletasCompradas.value.reduce((acc, boleta) => {
+    if (boleta.pago === "Pagada") {
+      return acc + parseInt(Precio_Verificado.value);
+    }
+    return acc;
+  }, 0);
+
+  doc.text(`Total recaudado: ${totaldinerorecaudado}`, 10, doc.autoTable.previous.finalY + 20);
 
   doc.save("reporte.pdf");
 };
@@ -1050,7 +1116,7 @@ const imprimir = () => {
 
 .cont_color1,
 .cont_color2,
-.cont_color3{
+.cont_color3 {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1075,6 +1141,13 @@ const imprimir = () => {
   height: 40px;
   border-radius: 5px;
 }
+.cont_btn_editar1{
+  background-color: rgb(38, 38, 151);
+  color: white;
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
 
 @media(max-width: 1000px) {
   .cuerpo_info {
