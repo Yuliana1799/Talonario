@@ -139,7 +139,7 @@
         </div>
         <div class="cont_info_acciones">
           <div class="cont_btn1">
-            <button :style="{ backgroundColor: color3 }" class="btn1">Estado</button>
+            <button @click="ganador" :style="{ backgroundColor: color3 }" class="btn1">Estado</button>
           </div>
           <div class="cont_btn2">
             <button :style="{ backgroundColor: color3 }" class="btn2" @click="listarBoletas()">Listar tus
@@ -242,9 +242,11 @@
 </template>
 
 <script setup>
+
 import { ref } from 'vue';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import Swal from 'sweetalert2';
 
 jsPDF.autoTable = autoTable;
 
@@ -506,6 +508,8 @@ const getBoletaColor = (estado) => {
       return 'ClasePagada';
     case 2:
       return 'ClaseNoPagada';
+      case 3:
+      return 'claseGanadora';
   }
 };
 
@@ -567,6 +571,33 @@ const imprimir = () => {
 
   doc.save("reporte.pdf");
 };
+const ganador = () => {
+  Swal.fire({
+    width: 400,
+    title: "Digite la balota ganadora",
+    input: "text",
+    text: "Por favor, ingrese la boleta ganadora",
+    color: "white",
+    background: "rgb(47, 54, 206  )",
+    inputValidator: (value) => {
+      if (!/^\d+$/.test(value) || parseInt(value) < 1 || parseInt(value) > 99) {
+        return "Por favor, ingrese un número válido entre 1 y 100.";
+      }
+    },
+  }).then((result) => {
+  if (result.isConfirmed) {
+    const numeroGanador = parseInt(result.value);
+    console.log("Número ganador:", numeroGanador);
+    boleta.value[numeroGanador].estado=3
+    
+}
+});
+;
+;
+};
+
+
+
 </script>
 
 <style scoped>
@@ -576,6 +607,7 @@ const imprimir = () => {
   height: 100vh;
   width: 100%;
   font-family: Arial, Helvetica, sans-serif;
+  
 }
 
 .cont_titulo {
@@ -902,6 +934,19 @@ const imprimir = () => {
   margin: 5px;
   cursor: pointer;
 }
+.claseGanadora {
+  background-color: yellow;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  cursor: pointer;
+  
+}
+
 
 .ClaseInicial:hover,
 .ClasePagada:hover,
