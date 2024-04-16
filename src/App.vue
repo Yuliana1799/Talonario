@@ -326,7 +326,7 @@ const crearTalonario = () => {
   }
   else {
     premio_Verificado.value = premio.value;
-    Precio_Verificado.value = Precio.value;
+    Precio_Verificado.value = formatoConUnidades(Precio.value);
     selectedLoteria_Verificado.value = selectedLoteria.value;
     fecha_Verificado.value = fecha.value;
     const cantidad = selectedCantidad.value;
@@ -539,64 +539,67 @@ const personalizarColores = () => {
 
 const imprimir = () => {
   const doc = new jsPDF();
+  let totaldinerorecaudado = 0;
+  let totaldineroporrecaudar = 0;
+  let alturafila = 20;
+
+  doc.setFontSize(30);
+  doc.text('Boletas', 105, 10, 'center');
 
   doc.setFontSize(12);
-  doc.text("Resumen de boletas vendidas", 10, 10);
+  doc.text(`Premio: ${premio_Verificado.value}`, 10, 20);
 
-  const tableData = boletasCompradas.value.map((boleta, index) => [
-    boleta.numero,
-    boleta.nombre,
-    boleta.telefono,
-    boleta.direccion,
-    boleta.pago,
-  ]);
+  doc.text(`Precio: ${Precio_Verificado.value}`, 10, 30);
+
+  doc.text(`Lotería: ${selectedLoteria_Verificado.value}`, 10, 40);
+
+  doc.text(`Fecha: ${fecha_Verificado.value}`, 10, 50);
 
   doc.autoTable({
-    head: [["Boleta", "Nombre", "Teléfono", "Dirección", "Pago"]],
-    body: tableData,
-    startY: 20,
-  });
-
-  const totalBoletas = boletasCompradas.value.length;
-  doc.text(`Total de balotas compradas: ${totalBoletas}`, 10, doc.autoTable.previous.finalY + 10);
-
-  const totaldinerorecaudado = boletasCompradas.value.reduce((acc, boleta) => {
-    if (boleta.pago === "Pagada") {
-      return acc + parseInt(Precio_Verificado.value);
-    }
-    return acc;
-  }, 0);
-
-  doc.text(`Total recaudado: ${totaldinerorecaudado}`, 10, doc.autoTable.previous.finalY + 20);
-
-  doc.save("reporte.pdf");
-};
-const ganador = () => {
-  Swal.fire({
-    width: 400,
-    title: "Digite la balota ganadora",
-    input: "text",
-    text: "Por favor, ingrese la boleta ganadora",
-    color: "white",
-    background: "rgb(47, 54, 206  )",
-    inputValidator: (value) => {
-      if (!/^\d+$/.test(value) || parseInt(value) < 1 || parseInt(value) > 99) {
-        return "Por favor, ingrese un número válido entre 1 y 100.";
+    startY: 70,
+    head: [['Número', 'Nombre', 'Teléfono', 'Dirección', 'Pago']],
+    body: boletasCompradas.value.map(b => [b.numero, b.nombre, b.telefono, b.direccion, b.pago]),
+    didDrawCell: (data) => {
+      if (contColores.value) {
+        if (data.row.index % 2 === 0) {
+          doc.setFillColor(color1.value);
+          doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+        } else {
+          doc.setFillColor(color2.value);
+          doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+        }
       }
     },
-  }).then((result) => {
-  if (result.isConfirmed) {
-    const numeroGanador = parseInt(result.value);
-    console.log("Número ganador:", numeroGanador);
-    boleta.value[numeroGanador].estado=3
-    
-}
-});
-;
-;
+    headStyles: {
+      fillColor: color3.value,
+      textColor: '#FFF',
+    },
+    margin: { bottom: 20 } // Ajusta el margen inferior de la tabla para dejar espacio para las líneas de texto
+  });
+
+  const finalY = doc.autoTable.previous.finalY; // Obtén la posición vertical final de la tabla
+
+  boletasCompradas.value.forEach(boleta => {
+    if (boleta.pago === "Pagada") {
+      totaldinerorecaudado += parseFloat(Precio.value);
+    } else {
+      totaldineroporrecaudar += parseFloat(Precio.value);
+    }
+  });
+
+  // Ajusta la posición vertical de las líneas de texto según la posición final de la tabla
+  doc.text(`Total recaudado: ${formatoConUnidades(totaldinerorecaudado)}`, 10, finalY + 10);
+  doc.text(`Total por recaudar: ${formatoConUnidades(totaldineroporrecaudar)}`, 10, finalY + 20);
+
+  doc.save('Boletas.pdf');
 };
 
 
+
+
+function formatoConUnidades(valor) {
+    return valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");
+}
 
 </script>
 
